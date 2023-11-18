@@ -1,0 +1,46 @@
+fetch(Xrm.Utility.getGlobalContext().getClientUrl() + "/api/data/v9.2/ya_records/$count", {
+	method: "GET",
+	headers: {
+		"OData-MaxVersion": "4.0",
+		"OData-Version": "4.0",
+		"Accept": "application/json",
+                "Prefer": "odata.include-annotations=\"Microsoft.Dynamics.CRM.totalrecordcount,Microsoft.Dynamics.CRM.totalrecordcountlimitexceeded\""
+	}
+}).then(
+	function success(response) {
+		return response.text().then((text) => { if (response.ok) { return text; } });
+	}
+).then(function (count) {
+	console.log(count);
+}).catch(function (error) {
+	console.log(error.message);
+});
+
+
+
+
+
+fetch(Xrm.Utility.getGlobalContext().getClientUrl() + "/api/data/v9.2/RetrieveTotalRecordCount(EntityNames=@EntityNames)?@EntityNames=[%22ya_record%22]", {
+	method: "GET",
+	headers: {
+		"OData-MaxVersion": "4.0",
+		"OData-Version": "4.0",
+		"Content-Type": "application/json; charset=utf-8",
+		"Accept": "application/json"
+	}
+}).then(
+	function success(response) {
+		return response.json().then((json) => { if (response.ok) { return [response, json]; } else { throw json.error; } });
+	}
+).then(function (responseObjects) {
+	var response = responseObjects[0];
+	var responseBody = responseObjects[1];
+	var result = responseBody;
+	// // console.log(result);
+	// Return Type: mscrm.RetrieveTotalRecordCountResponse
+	// Output Parameters
+	var entityrecordcountcollection = result["EntityRecordCountCollection"]; // mscrm.EntityRecordCountCollection
+	console.log(entityrecordcountcollection["Values"][0]);
+}).catch(function (error) {
+	console.log(error.message);
+});
